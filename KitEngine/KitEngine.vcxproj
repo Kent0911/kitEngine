@@ -19,11 +19,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\CAssetsManager.cpp" />
+    <ClCompile Include="Src\CKitBehaviour.cpp" />
+    <ClCompile Include="Src\CKitEngine.cpp" />
+    <ClCompile Include="Src\CScene.cpp" />
+    <ClCompile Include="Src\CSceneManager.cpp" />
+    <ClCompile Include="Src\CWindow.cpp" />
     <ClCompile Include="Src\dllmain.cpp" />
     <ClCompile Include="Src\KitEngine.cpp" />
     <ClCompile Include="Src\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Inc\CAssetsManager.h" />
+    <ClInclude Include="Inc\CKitEngine.h" />
+    <ClInclude Include="Inc\CScene.h" />
+    <ClInclude Include="Inc\CKitBehaviour.h" />
+    <ClInclude Include="Src\CSceneManager.h" />
+    <ClInclude Include="Src\CWindow.h" />
     <ClInclude Include="Src\stdafx.h" />
     <ClInclude Include="Src\targetver.h" />
   </ItemGroup>
@@ -109,7 +121,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;KITENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>..\DirectXTK\Inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Library\DirectXTK\Inc;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
