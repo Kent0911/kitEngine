@@ -22,6 +22,7 @@
     <ClCompile Include="Src\CAssetsManager.cpp" />
     <ClCompile Include="Src\CKitBehaviour.cpp" />
     <ClCompile Include="Src\CKitEngine.cpp" />
+    <ClCompile Include="Src\CModel.cpp" />
     <ClCompile Include="Src\CPixelMaterial.cpp" />
     <ClCompile Include="Src\CRender.cpp" />
     <ClCompile Include="Src\CScene.cpp" />
