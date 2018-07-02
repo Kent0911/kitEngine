@@ -6,6 +6,7 @@
 #include "../Library/KitLib/include/Kitlib.h"
 #include "../Src/CWindow.h"
 #include "../Src/CSceneManager.h"
+#include "CAssetsManager.h"
 
 #define DEFALUT_NUMERATOR (UINT)60
 #define DEFALUT_DENOMINATOR (UINT)1

@@ -110,10 +110,41 @@ HRESULT KitEngine::InitDevice() {
 
 HRESULT KitEngine::HCreateWindow(HINSTANCE _hInstance,int _nCmdShow) {
 	m_hInst = _hInstance;
+	m_hWnd = CreateWindow(m_uptrWindow->GetWcex().lpszClassName, m_cConfig.m_lpstr, WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, m_uptrWindow->GetRect().right - m_uptrWindow->GetRect().left, m_uptrWindow->GetRect().bottom - m_uptrWindow->GetRect().top,
+		nullptr, nullptr, m_hInst, nullptr);
+	if (!m_hWnd) { return E_FAIL; }
+
+	ShowWindow(m_hWnd, _nCmdShow);
+
+	return S_OK;
 }
 
 KitEngine::KitEngine(HINSTANCE _hInstance, int _nCmdShow, CONFIG* _config, std::shared_ptr<Scene> _startScene) {
 	m_cConfig = *_config;
+	m_uptrWindow.reset(new CWindow(_hInstance, _nCmdShow, _config->m_vWindowSize));
+	AdjustWindowRect(&m_uptrWindow->GetRect(), WS_OVERLAPPEDWINDOW, FALSE);
+	HCreateWindow(_hInstance, _nCmdShow);
+	InitDevice();
+	m_uptrSceneManager.reset(new SceneManager(_startScene));
+}
 
+KitEngine::~KitEngine() {
+	g_assetsManager.GetInstance().ClearAssets();
+	m_uptrSceneManager.reset();
+	m_uptrWindow.reset();
+}
 
+void KitEngine::ChangeScene(std::shared_ptr<Scene> _changeScene) {
+	m_uptrSceneManager->ChangeScene(_changeScene);
+}
+
+void KitEngine::Update() {
+	m_uptrSceneManager->Update();
+}
+
+void KitEngine::Render() {
+	m_uptrSceneManager->Render();
+
+	m_pSwapChain->Present(0, 0);
 }

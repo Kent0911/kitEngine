@@ -22,18 +22,24 @@
     <ClCompile Include="Src\CAssetsManager.cpp" />
     <ClCompile Include="Src\CKitBehaviour.cpp" />
     <ClCompile Include="Src\CKitEngine.cpp" />
+    <ClCompile Include="Src\CPixelMaterial.cpp" />
+    <ClCompile Include="Src\CRender.cpp" />
     <ClCompile Include="Src\CScene.cpp" />
     <ClCompile Include="Src\CSceneManager.cpp" />
     <ClCompile Include="Src\CWindow.cpp" />
     <ClCompile Include="Src\dllmain.cpp" />
     <ClCompile Include="Src\KitEngine.cpp" />
     <ClCompile Include="Src\stdafx.cpp" />
+    <ClCompile Include="Src\CVertexTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\CAssetsManager.h" />
     <ClInclude Include="Inc\CKitEngine.h" />
+    <ClInclude Include="Inc\CPixelMaterial.h" />
+    <ClInclude Include="Inc\CRender.h" />
     <ClInclude Include="Inc\CScene.h" />
     <ClInclude Include="Inc\CKitBehaviour.h" />
+    <ClInclude Include="Inc\CVertexTypes.h" />
     <ClInclude Include="Src\CSceneManager.h" />
     <ClInclude Include="Src\CWindow.h" />
     <ClInclude Include="Src\stdafx.h" />
