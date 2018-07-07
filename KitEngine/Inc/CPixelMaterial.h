@@ -9,9 +9,8 @@ namespace kit {
 			Col,
 		};
 
-		union MaterialCol {
+		struct MaterialCol {
 			DirectX::XMFLOAT4 color;
-			float color[4];
 		};
 	}
 }
