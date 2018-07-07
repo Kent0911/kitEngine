@@ -43,7 +43,7 @@ LRESULT CWindow::WndProc(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lPar
 		return DefWindowProc(_hWnd, _message, _wParam, _lParam);
 	}
 
-	return 0;
+	return S_OK;
 }
 
 HRESULT CWindow::InitWindow(HINSTANCE _hInstance, int _nCmdShow) {
@@ -61,6 +61,7 @@ HRESULT CWindow::InitWindow(HINSTANCE _hInstance, int _nCmdShow) {
 	m_wcex.hIconSm = LoadIcon(m_wcex.hInstance, (LPCTSTR)IDI_SAMPLE1);
 
 	if (!RegisterClassEx(&m_wcex)) { return E_FAIL; }
+	return S_OK;
 }
 
 CWindow::CWindow(HINSTANCE _hInstance, int _nCmdShow) {
