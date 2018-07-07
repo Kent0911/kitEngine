@@ -4,8 +4,12 @@
 #include <iostream>
 #include <assert.h>
 #include <wrl.h>
+#include <vector>
 #include <d3d11.h>
+#include <d3dcompiler.h>
 #include <DirectXMath.h>
+
+#pragma comment(lib,"d3dcompiler.lib")
 
 namespace kit {
 	namespace Engine {
@@ -36,11 +40,85 @@ namespace kit {
 			DirectX::XMVECTOR m_xTranslation;
 		};
 		
-
+		template<typename Vertex>
 		class Shaders {
 		public:
-			bool Create(ID3D11Device* _pd3dDevice);
-			void Apply(ID3D11DeviceContext* _pd3dImmediateContext);
+			bool Create(ID3D11Device* _pd3dDevice, wchar_t const* _vsPath,wchar_t const* _psPath,bool _isCompiled) {
+				if (false == _isCompiled) {
+					HRESULT hr = S_OK;
+
+					DWORD flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#ifdef _DEBUG
+					flags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+					// Compile the vertex shader
+					Microsoft::WRL::ComPtr<ID3DBlob> vsBlob;
+
+					hr = D3DCompileFromFile(_vsPath, nullptr, nullptr, "vs_main", "vs_5_0", flags, 0, vsBlob.GetAddressOf());
+					if (FAILED(hr)) { return false; }
+
+					hr = _pd3dDevice->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(),
+						nullptr, m_cptrVertexShader.GetAddressOf());
+					if (FAILED(hr)) { return false; }
+
+					hr = _pd3dDevice->CreateInputLayout(Vertex::VertexDesc, Vertex::InputElementCount,
+						vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(),
+						m_cptrInputLayout.GetAddressOf());
+					if (FAILED(hr)) { return false; }
+
+					// Conpile the pixel shader
+					Microsoft::WRL::ComPtr<ID3DBlob> psBlob;
+					hr = D3DCompileFromFile(_psPath, nullptr, nullptr, "ps_main", "ps_5_0", flags, 0, psBlob);
+					if (FAILED(hr)) { return false; }
+
+					hr = _pd3dDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(),
+						nullptr, m_cptrPixelShader.GetAddressOf());
+					if (FAILED(hr)) { return false; }
+
+					return true;
+				}
+				else if (true == _isCompiled) {
+					HRESULT hr = S_OK;
+
+					std::vector<BYTE> byteVector;
+					BYTE byte = 0;
+
+					FILE *fp = fopen(_vsPath, "r");
+					if (NULL == fp) { return false; }
+
+					char buf[256];
+					int n = 0;
+
+					do {
+						if (n > NULL) {
+							static int array_ = 0;
+							if (0 == strcmp(buf, "const")) {
+								
+								do {
+									fscanf(fp, "%s", &buf);
+								} while (0 != strcmp(buf, "{"));
+								
+								for (int f = 0, f = != strcmp(buf, "}"); f = fscanf(fp, "%s", &buf)) {
+									fscanf(fp, "%d", &byte);
+									byteVector.push_back(byte);
+								}
+							}
+						}
+						n = fscanf(fp, "%s", buf);
+					} while (n > NULL);
+
+					rewind(fp);
+					fclose(fp);
+
+
+
+					}
+			}
+			void Apply(ID3D11DeviceContext* _pd3dImmediateContext) {
+				_pd3dImmediateContext->IASetInputLayout(m_cptrInputLayout.Get());
+				_pd3dImmediateContext->VSSetShader(m_cptrVertexShader.Get(), nullptr, 0);
+				_pd3dImmediateContext->PSSetShader(m_cptrPixelShader.Get(), nullptr, 0);
+			}
 		private:
 			Microsoft::WRL::ComPtr<ID3D11VertexShader> m_cptrVertexShader;
 			Microsoft::WRL::ComPtr<ID3D11PixelShader> m_cptrPixelShader;
@@ -53,15 +131,44 @@ namespace kit {
 			Constant
 		};
 
+		template<typename Ty>
 		class Buffers {
 		public:
-			bool Create(ID3D11Device* _pd3dDevice);
-			void Apply(ID3D11DeviceContext* _pd3dImmediateContext);
+			HRESULT Create(ID3D11Device* _pd3dDevice) {
+				D3D11_BUFFER_DESC bufferDesc;
+				ZeroMemory(&bufferDesc, sizeof(D3D11_BUFFER_DESC));
+				bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+				bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+				bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+				bufferDesc.ByteWidth = sizeof(Ty);
+
+				return _pd3dDevice->CreateBuffer(&bufferDesc, nullptr, m_cptrBuffer.GetAddressOf());
+			}
+
+			template<typename...Args>
+			void Set(ID3D11DeviceContext* _pd3dImmidiateContext, Args&&... _args) {
+				D3D11_MAPPED_SUBRESOURCE mappedResource;
+				if (SUCCEEDED(_pd3dImmidiateContext->Map(m_cptrBuffer.Get(), 0
+					D3D11_MAP_WRITE_DISCARD, 0, &mappedResource))) {
+					new(mappedResource.pData)Ty(std::forward<Args>(_args)...);
+					_pd3dImmidiateContext->Unmap(m_cptrBuffer.Get(), 0);
+				}
+			}
+
+			void PsSet(ID3D11DeviceContext* _pd3dImmidiateContext, int _index) {
+				_pd3dImmidiateContext->PSSetConstantBuffers(_index, 1, m_cptrBuffer.GetAddressOf());
+			}
+
+			void VsSet(ID3D11DeviceContext* _pd3dImmidiateContext, int _index) {
+				_pd3dImmidiateContext->VSSetConstantBuffers(_index, 1, m_cptrBuffer.GetAddressOf());
+			}
+
+			void Destroy() {
+				m_cptrBuffer.Reset();
+			}
 
 		private:
-			Microsoft::WRL::ComPtr<ID3D11Buffer> m_cptrVertexBuffer;
-			Microsoft::WRL::ComPtr<ID3D11Buffer> m_cptrIndexBuffer;
-			Microsoft::WRL::ComPtr<ID3D11Buffer> m_cptrConstantBuffer;
+			Microsoft::WRL::ComPtr<ID3D11Buffer> m_cptrBuffer;
 		};
 
 	}
