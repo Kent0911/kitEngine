@@ -39,17 +39,17 @@ namespace kit {
 		}CONFIG, *LPCONFIG;
 
 		class Scene;
-		class KitEngine{
+		class KitEngine :public kit::Singleton<KitEngine> {
 		public:
-			KitEngine(HINSTANCE _hInstance, int _nCmdShow, CONFIG* _config, std::shared_ptr<Scene> _startScene);
-			~KitEngine();
-
+			bool Create(HINSTANCE _hInstance, int _nCmdShow, LPCONFIG _config, std::shared_ptr<Scene> _startScene);
 			void ChangeScene(std::shared_ptr<Scene> _changeScene);
 
 			void Update();
 			void Render();
 
 		private:
+			friend class Singleton<KitEngine>;
+			KitEngine();
 			// DirectX11Ç≈égópÇ∑ÇÈïœêî
 			HINSTANCE						m_hInst;
 			HWND							m_hWnd;
@@ -67,7 +67,7 @@ namespace kit {
 			CONFIG							m_cConfig;
 			std::unique_ptr<CWindow>		m_uptrWindow;
 			std::unique_ptr<SceneManager>	m_uptrSceneManager;
-		
+
 			HRESULT InitDevice();
 			HRESULT HCreateWindow(HINSTANCE _hInstance, int _nCmdShow);
 		};
