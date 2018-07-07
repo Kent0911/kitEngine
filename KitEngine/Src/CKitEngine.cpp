@@ -120,19 +120,15 @@ HRESULT KitEngine::HCreateWindow(HINSTANCE _hInstance,int _nCmdShow) {
 	return S_OK;
 }
 
-KitEngine::KitEngine(HINSTANCE _hInstance, int _nCmdShow, CONFIG* _config, std::shared_ptr<Scene> _startScene) {
+KitEngine::KitEngine(){	}
+
+bool KitEngine::Create(HINSTANCE _hInstance, int _nCmdShow, LPCONFIG _config, std::shared_ptr<Scene> _startScene) {
 	m_cConfig = *_config;
-	m_uptrWindow.reset(new CWindow(_hInstance, _nCmdShow, _config->m_vWindowSize));
-	AdjustWindowRect(&m_uptrWindow->GetRect(), WS_OVERLAPPEDWINDOW, FALSE);
+	m_uptrWindow.reset(new CWindow(_hInstance, _nCmdShow, m_cConfig.m_vWindowSize));
+	AdjustWindowRect(&m_uptrWindow.get()->GetRect(), WS_OVERLAPPEDWINDOW, FALSE);
 	HCreateWindow(_hInstance, _nCmdShow);
 	InitDevice();
 	m_uptrSceneManager.reset(new SceneManager(_startScene));
-}
-
-KitEngine::~KitEngine() {
-	g_assetsManager.GetInstance().ClearAssets();
-	m_uptrSceneManager.reset();
-	m_uptrWindow.reset();
 }
 
 void KitEngine::ChangeScene(std::shared_ptr<Scene> _changeScene) {
