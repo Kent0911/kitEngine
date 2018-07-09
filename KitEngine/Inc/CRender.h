@@ -40,6 +40,42 @@ namespace kit {
 			DirectX::XMVECTOR m_xTranslation;
 		};
 		
+		template<typename Ty>
+		std::vector<Ty> LeadShaderFile(wchar_t const& _path) {
+			std::vector<Ty> byteVector;
+			BYTE byte = 0;
+
+			FILE *fp = fopen(_path, "r");
+			if (NULL == fp) { return false; }
+
+			char buf[256];
+			int n = 0;
+
+			do {
+				if (n > NULL) {
+					static int array_ = 0;
+					if (0 == strcmp(buf, "const")) {
+
+						do {
+							fscanf(fp, "%s", &buf);
+						} while (0 != strcmp(buf, "{"));
+
+						for (int f = 0, f = != strcmp(buf, "}"); f = fscanf(fp, "%s", &buf)) {
+							fscanf(fp, "%d", &byte);
+							byteVector.push_back(byte);
+						}
+					}
+				}
+				n = fscanf(fp, "%s", buf);
+			} while (n > NULL);
+
+			rewind(fp);
+			fclose(fp);
+
+			return byteVector;
+		}
+
+
 		template<typename Vertex>
 		class Shaders {
 		public:
@@ -80,38 +116,28 @@ namespace kit {
 				else if (true == _isCompiled) {
 					HRESULT hr = S_OK;
 
-					std::vector<BYTE> byteVector;
-					BYTE byte = 0;
+					BYTE* vs_main = LeadShaderFile<BYTE>(_vsPath).data();
+					
+					size_t array_size = ARRAYSIZE(vs_main);
 
-					FILE *fp = fopen(_vsPath, "r");
-					if (NULL == fp) { return false; }
-
-					char buf[256];
-					int n = 0;
-
-					do {
-						if (n > NULL) {
-							static int array_ = 0;
-							if (0 == strcmp(buf, "const")) {
-								
-								do {
-									fscanf(fp, "%s", &buf);
-								} while (0 != strcmp(buf, "{"));
-								
-								for (int f = 0, f = != strcmp(buf, "}"); f = fscanf(fp, "%s", &buf)) {
-									fscanf(fp, "%d", &byte);
-									byteVector.push_back(byte);
-								}
-							}
-						}
-						n = fscanf(fp, "%s", buf);
-					} while (n > NULL);
-
-					rewind(fp);
-					fclose(fp);
+					hr = _pd3dDevice->CreateVertexShader(&vs_main, &array_size, NULL, m_cptrVertexShader.GetAddressOf());
+					if (FAILED(hr)) { return false; }
 
 
+					hr = _pd3dDevice->CreateInputLayout(Vertex::VertexDesc, Vertex::InputElementCount,
+						&vs_main, array_size,
+						m_cptrInputLayout.GetAddressOf());
+					if (FAILED(hr)) { return false; }
 
+
+					BYTE* ps_main = LeadShaderFile<BYTE>(_psPath).data();
+
+					array_size = ARRAYSIZE(ps_main);
+
+					hr = _pd3dDevice->CreatePixelShader(&ps_main, &array_size, NULL, m_cptrPixelShader.GetAddressOf());
+					if (FAILED(hr)) { return false; }
+
+					return true;
 					}
 			}
 			void Apply(ID3D11DeviceContext* _pd3dImmediateContext) {
@@ -170,6 +196,5 @@ namespace kit {
 		private:
 			Microsoft::WRL::ComPtr<ID3D11Buffer> m_cptrBuffer;
 		};
-
 	}
 }
