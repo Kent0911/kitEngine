@@ -27,6 +27,7 @@
     <ClCompile Include="Src\CRender.cpp" />
     <ClCompile Include="Src\CScene.cpp" />
     <ClCompile Include="Src\CSceneManager.cpp" />
+    <ClCompile Include="Src\CSpriteTexture.cpp" />
     <ClCompile Include="Src\CWindow.cpp" />
     <ClCompile Include="Src\dllmain.cpp" />
     <ClCompile Include="Src\KitEngine.cpp" />
@@ -35,12 +36,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\CAssetsManager.h" />
+    <ClInclude Include="Inc\CCamera.h" />
     <ClInclude Include="Inc\CKitEngine.h" />
+    <ClInclude Include="Inc\CModel.h" />
     <ClInclude Include="Inc\CPixelMaterial.h" />
     <ClInclude Include="Inc\CRender.h" />
     <ClInclude Include="Inc\CScene.h" />
     <ClInclude Include="Inc\CKitBehaviour.h" />
+    <ClInclude Include="Inc\CSpriteTexture.h" />
     <ClInclude Include="Inc\CVertexTypes.h" />
+    <ClInclude Include="Src\AlignedNew.h" />
     <ClInclude Include="Src\CSceneManager.h" />
     <ClInclude Include="Src\CWindow.h" />
     <ClInclude Include="Src\stdafx.h" />
@@ -76,7 +81,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -138,16 +143,18 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;KITENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>Library\DirectXTK\Inc;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3dcompiler.lib;dxguid.lib;winmm.lib;comctl32.lib;usp10.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

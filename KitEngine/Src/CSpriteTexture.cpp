@@ -80,6 +80,7 @@ private:
 	size_t m_sizeSpriteQueueCount;
 	size_t m_sizeSpriteQueueArraySize;
 
+	void PrepareForRendering(ID3D11DeviceContext* _pd3dDeviceContext);
 	void RenderTextrue(_In_ ID3D11ShaderResourceView* _texuture, _In_reads_(const) SpriteInfo const* const* _sprites, size_t count);
 
 	static DirectX::XMVECTOR GetTextureSize(_In_ ID3D11ShaderResourceView* _texture);
@@ -101,6 +102,9 @@ private:
 	struct DeviceResources {
 		DeviceResources(_In_ ID3D11Device* _pd3dDevice);
 
+		inline DeviceResources GetInstance() const {
+			return *this;
+		}
 	private:
 		Shaders<VertexPosColTex> m_shaders;
 		Buffers<VSMatrix2D> m_vsBuffers;
@@ -205,7 +209,38 @@ void XM_CALLCONV SpriteTexture::Impl::Render(ID3D11ShaderResourceView* _texture,
 
 	if (!m_bInBeginEndPair) { throw std::exception("Begin must be called before Render"); }
 
+	SpriteInfo* sprite = &m_uptrSpriteQueue[m_sizeSpriteQueueCount];
 
+	DirectX::XMVECTOR dest = _destination;
+
+	if (_sourceRectangle) {
+		DirectX::XMVECTOR source = LoadRect(_sourceRectangle);
+
+		DirectX::XMStoreFloat4A(&sprite->source, source);
+
+		if (!(_flags & SpriteInfo::DesSizeInPixels)) {
+			dest = DirectX::XMVectorPermute<0, 1, 6, 7>(dest, DirectX::XMVectorMultiply(dest, source));
+		}
+
+		_flags |= SpriteInfo::SourceInTexels | SpriteInfo::DesSizeInPixels;
+	}
+	else {
+		static const DirectX::XMVECTORF32 wholeTexture = { {{0,0,1,1}} };
+
+		DirectX::XMStoreFloat4A(&sprite->source, wholeTexture);
+	}
+
+	DirectX::XMStoreFloat4A(&sprite->destination, dest);
+	DirectX::XMStoreFloat4A(&sprite->color, _color);
+	DirectX::XMStoreFloat4A(&sprite->originRotationDepth, _originRotationDepth);
+
+	sprite->texture = _texture;
+	sprite->flags = _flags;
+}
+
+void SpriteTexture::Impl::PrepareForRendering(ID3D11DeviceContext* _pd3dDeviceContext) {
+	auto diviceContext = _pd3dDeviceContext;
+	auto blendState = m_cptrBlendState.Get();
 }
 
 DirectX::XMVECTOR SpriteTexture::Impl::GetTextureSize(_In_ ID3D11ShaderResourceView* _texture) {

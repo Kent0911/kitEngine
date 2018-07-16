@@ -44,6 +44,14 @@ namespace kit {
 			static const D3D11_INPUT_ELEMENT_DESC VertexDesc[InputElementCount];
 		}*LPVertexPosNorTex;
 
+		typedef struct VertexPosColTex {
+			DirectX::XMFLOAT3 position;
+			DirectX::XMFLOAT4 color;
+			DirectX::XMFLOAT2 texture;
+			static const int InputElementCount = 3;
+			static const D3D11_INPUT_ELEMENT_DESC VertexDesc[InputElementCount];
+		};
+
 		typedef struct VertexPosNorCol {
 			DirectX::XMFLOAT3 position;
 			DirectX::XMFLOAT3 normal;

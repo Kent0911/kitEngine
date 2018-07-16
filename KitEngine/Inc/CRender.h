@@ -1,5 +1,7 @@
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <iostream>
 #include <assert.h>
@@ -8,6 +10,8 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+
+#include "CCamera.h"
 
 #pragma comment(lib,"d3dcompiler.lib")
 
@@ -41,7 +45,7 @@ namespace kit {
 		};
 		
 		template<typename Ty>
-		std::vector<Ty> LeadShaderFile(wchar_t const& _path) {
+		std::vector<Ty> LeadShaderFile(char const* _path) {
 			std::vector<Ty> byteVector;
 			BYTE byte = 0;
 
@@ -60,7 +64,7 @@ namespace kit {
 							fscanf(fp, "%s", &buf);
 						} while (0 != strcmp(buf, "{"));
 
-						for (int f = 0, f = != strcmp(buf, "}"); f = fscanf(fp, "%s", &buf)) {
+						for (int f = 0; f != strcmp(buf, "}"); f = fscanf(fp, "%s", &buf)) {
 							fscanf(fp, "%d", &byte);
 							byteVector.push_back(byte);
 						}
@@ -151,12 +155,6 @@ namespace kit {
 			Microsoft::WRL::ComPtr<ID3D11InputLayout> m_cptrInputLayout;
 		};
 
-		enum class Buffer {
-			Vertex,
-			Index,
-			Constant
-		};
-
 		template<typename Ty>
 		class Buffers {
 		public:
@@ -174,7 +172,7 @@ namespace kit {
 			template<typename...Args>
 			void Set(ID3D11DeviceContext* _pd3dImmidiateContext, Args&&... _args) {
 				D3D11_MAPPED_SUBRESOURCE mappedResource;
-				if (SUCCEEDED(_pd3dImmidiateContext->Map(m_cptrBuffer.Get(), 0
+				if (SUCCEEDED(_pd3dImmidiateContext->Map(m_cptrBuffer.Get(), 0,
 					D3D11_MAP_WRITE_DISCARD, 0, &mappedResource))) {
 					new(mappedResource.pData)Ty(std::forward<Args>(_args)...);
 					_pd3dImmidiateContext->Unmap(m_cptrBuffer.Get(), 0);
