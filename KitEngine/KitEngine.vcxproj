@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\CAssetsManager.cpp" />
+    <ClCompile Include="Src\CConstantBuffer.cpp" />
     <ClCompile Include="Src\CKitBehaviour.cpp" />
     <ClCompile Include="Src\CKitEngine.cpp" />
     <ClCompile Include="Src\CModel.cpp" />
     <ClCompile Include="Src\CPixelMaterial.cpp" />
+    <ClCompile Include="Src\CQuadTree.cpp" />
     <ClCompile Include="Src\CRender.cpp" />
     <ClCompile Include="Src\CScene.cpp" />
     <ClCompile Include="Src\CSceneManager.cpp" />
@@ -37,9 +39,11 @@
   <ItemGroup>
     <ClInclude Include="Inc\CAssetsManager.h" />
     <ClInclude Include="Inc\CCamera.h" />
+    <ClInclude Include="Inc\CConstantBuffer.h" />
     <ClInclude Include="Inc\CKitEngine.h" />
     <ClInclude Include="Inc\CModel.h" />
     <ClInclude Include="Inc\CPixelMaterial.h" />
+    <ClInclude Include="Inc\CQuadTree.h" />
     <ClInclude Include="Inc\CRender.h" />
     <ClInclude Include="Inc\CScene.h" />
     <ClInclude Include="Inc\CKitBehaviour.h" />
@@ -115,6 +119,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>Library\KitLib\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>Library\KitLib\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -149,12 +155,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;KITENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Library\DirectXTK\Inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Library\DirectXTK\Inc;Library\KitLib\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3dcompiler.lib;dxguid.lib;winmm.lib;comctl32.lib;usp10.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;dxguid.lib;winmm.lib;comctl32.lib;usp10.lib;KitLib_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

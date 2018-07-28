@@ -12,9 +12,9 @@ namespace kit {
 		extern class KitBehaviour;
 		extern class AssetsManager g_assetsManager;
 
-		class AssetsManager :public kit::Singleton<AssetsManager> {
+		class AssetsManager :public kit::Singleton< AssetsManager > {
 		public:
-			inline void AddAsset(kit::Engine::KitBehaviour* _asset) {
+			inline void AddAsset(KitBehaviour* _asset) {
 				mlis_assets.emplace_back(_asset);
 			}
 
@@ -26,7 +26,7 @@ namespace kit {
 			friend class kit::Singleton<AssetsManager>;
 			AssetsManager();
 
-			std::list<kit::Engine::KitBehaviour*> mlis_assets;
+			std::list<KitBehaviour*> mlis_assets;
 		};
 	}
 }

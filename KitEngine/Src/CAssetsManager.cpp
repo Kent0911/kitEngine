@@ -14,6 +14,8 @@ bool AssetsManager::ClearAssets() {
 	return true;
 }
 
+class hoge;
+
 void AssetsManager::Update() {
 	std::list<KitBehaviour*>::iterator iter = mlis_assets.begin();
 	while (iter != mlis_assets.end()) {

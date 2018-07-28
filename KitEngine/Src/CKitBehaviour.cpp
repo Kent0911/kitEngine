@@ -8,4 +8,6 @@ KitBehaviour::KitBehaviour() {
 	g_assetsManager.GetInstance().AddAsset(this);
 }
 
-KitBehaviour::~KitBehaviour() {	}
+KitBehaviour::~KitBehaviour() {
+
+}

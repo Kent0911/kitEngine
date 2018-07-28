@@ -30,7 +30,7 @@ inline DirectX::XMVECTOR LoadRect(_In_ RECT const* _rect) {
 	return v;
 }
 
-__declspec(align(16)) class SpriteTexture::Impl:public AlignedNew<SpriteTexture::Impl> {
+__declspec(align(16)) class SpriteTexture::Impl: public AlignedNew< SpriteTexture::Impl > {
 public:
 	Impl(_In_ ID3D11DeviceContext* _pd3dImmidiateContext, ID3D11Device* _pd3dDevice);
 
@@ -44,7 +44,7 @@ public:
 	
 	void End();
 
-	void Render(
+	void XM_CALLCONV Render(
 		_In_ ID3D11ShaderResourceView* _texture,
 		DirectX::XMVECTOR _destination,
 		_In_opt_ RECT const* _sourceRectangle,
@@ -119,7 +119,7 @@ private:
 };
 
 SpriteTexture::Impl::DeviceResources::DeviceResources(_In_ ID3D11Device* _pd3dDevice) {
-	m_shaders.Create(_pd3dDevice, L"../Shaders/Header/Vertex/SpriteTexture.h", L"../Shaders/Header/Pixel/SpriteTexture.h", true);
+	m_shaders.Create(_pd3dDevice, "../Shaders/Header/Vertex/SpriteTexture.h", "../Shaders/Header/Pixel/SpriteTexture.h", true);
 	m_vsBuffers.Create(_pd3dDevice);
 	m_psBuffers.Create(_pd3dDevice);
 }

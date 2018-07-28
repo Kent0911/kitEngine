@@ -1,0 +1,44 @@
+cbuffer PSMaterial: register(b1)
+{
+	float4 Diffuse:			packoffset(c0);
+	float4 Ambient:			packoffset(c1);
+	float3 Specular:		packoffset(c2);
+	float Power : packoffset(c2.w);
+	float3 Emissive:		packoffset(c3);
+};
+
+cbuffer PSLight: register(b2)
+{
+	float3 LightDir:		packoffset(c0);
+	float3 ViewDir:			packoffset(c1);
+	float4 LightAmbient:	packoffset(c2);
+	float4 LightDiffuse:	packoffset(c3);
+	float4 LightSpecular:	packoffset(c4);
+};
+
+struct VSOutput
+{
+	float4 Position:		SV_POSITION;
+	float3 Normal:			NORMAL;
+	float2 Texture :		TEXCOORD;
+};
+
+float4 ps_main (VSOutput input) : SV_TARGET
+{
+	float3 L = normalize(LightDir);
+	float3 N = normalize(input.Normal);
+	float lambertian = saturate(dot(L, N));
+	float3 V = normalize(-ViewDir);
+
+	float3 half_dir = normalize(L + V);
+	float spec_angle = saturate(dot(half_dir, N));
+	float specular = pow(spec_angle, Power);
+
+	float4 Ka = LightAmbient * Ambient;
+	float4 Kd = LightDiffuse * Diffuse;
+	float4 Ks = LightSpecular * float4(Specular, 1.0f);
+
+	float4 color_linear = Ka + lambertian * Kd + specular * Ks;
+
+	return saturate(color_linear);
+}
