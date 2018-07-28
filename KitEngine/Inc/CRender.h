@@ -2,6 +2,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+#include <Windows.h>
 #include <stdio.h>
 #include <iostream>
 #include <assert.h>
@@ -50,7 +51,7 @@ namespace kit {
 			BYTE byte = 0;
 
 			FILE *fp = fopen(_path, "r");
-			if (NULL == fp) { return false; }
+			if (NULL == fp) { assert(fp); }
 
 			char buf[256];
 			int n = 0;
@@ -83,7 +84,7 @@ namespace kit {
 		template<typename Vertex>
 		class Shaders {
 		public:
-			bool Create(ID3D11Device* _pd3dDevice, wchar_t const* _vsPath,wchar_t const* _psPath,bool _isCompiled) {
+			bool Create(ID3D11Device* _pd3dDevice, char const* _vsPath,char const* _psPath,bool _isCompiled) {
 				if (false == _isCompiled) {
 					HRESULT hr = S_OK;
 
@@ -94,7 +95,7 @@ namespace kit {
 					// Compile the vertex shader
 					Microsoft::WRL::ComPtr<ID3DBlob> vsBlob;
 
-					hr = D3DCompileFromFile(_vsPath, nullptr, nullptr, "vs_main", "vs_5_0", flags, 0, vsBlob.GetAddressOf());
+					hr = D3DCompileFromFile((LPCWSTR)_vsPath, nullptr, nullptr, "vs_main", "vs_5_0", flags, 0, vsBlob.GetAddressOf(), nullptr);
 					if (FAILED(hr)) { return false; }
 
 					hr = _pd3dDevice->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(),
@@ -108,7 +109,7 @@ namespace kit {
 
 					// Conpile the pixel shader
 					Microsoft::WRL::ComPtr<ID3DBlob> psBlob;
-					hr = D3DCompileFromFile(_psPath, nullptr, nullptr, "ps_main", "ps_5_0", flags, 0, psBlob);
+					hr = D3DCompileFromFile((LPCWSTR)_psPath, nullptr, nullptr, "ps_main", "ps_5_0", flags, 0, psBlob.GetAddressOf(), nullptr);
 					if (FAILED(hr)) { return false; }
 
 					hr = _pd3dDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(),
@@ -121,10 +122,10 @@ namespace kit {
 					HRESULT hr = S_OK;
 
 					BYTE* vs_main = LeadShaderFile<BYTE>(_vsPath).data();
-					
-					size_t array_size = ARRAYSIZE(vs_main);
 
-					hr = _pd3dDevice->CreateVertexShader(&vs_main, &array_size, NULL, m_cptrVertexShader.GetAddressOf());
+					size_t array_size = sizeof(vs_main) / sizeof(vs_main[0]);
+
+					hr = _pd3dDevice->CreateVertexShader(&vs_main, array_size, NULL, m_cptrVertexShader.GetAddressOf());
 					if (FAILED(hr)) { return false; }
 
 
@@ -136,9 +137,10 @@ namespace kit {
 
 					BYTE* ps_main = LeadShaderFile<BYTE>(_psPath).data();
 
-					array_size = ARRAYSIZE(ps_main);
+					
+					array_size = sizeof(ps_main) / sizeof(ps_main[0]);
 
-					hr = _pd3dDevice->CreatePixelShader(&ps_main, &array_size, NULL, m_cptrPixelShader.GetAddressOf());
+					hr = _pd3dDevice->CreatePixelShader(&ps_main, array_size, NULL, m_cptrPixelShader.GetAddressOf());
 					if (FAILED(hr)) { return false; }
 
 					return true;
