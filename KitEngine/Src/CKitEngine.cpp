@@ -101,10 +101,6 @@ HRESULT KitEngine::InitDevice() {
 	if (FAILED(hr))
 		return hr;
 
-	// Render class initialise
-	hr = RenderInitialize();
-	if (FAILED(hr)) { return hr; }
-
 	return S_OK;
 }
 
@@ -124,11 +120,14 @@ KitEngine::KitEngine(){	}
 
 bool KitEngine::Create(HINSTANCE _hInstance, int _nCmdShow, LPCONFIG _config, std::shared_ptr<Scene> _startScene) {
 	m_cConfig = *_config;
-	m_uptrWindow.reset(new CWindow(_hInstance, _nCmdShow, m_cConfig.m_vWindowSize));
+	m_uptrWindow.reset( new CWindow ( _hInstance, _nCmdShow, m_cConfig.m_vWindowSize) );
+	if ( nullptr == m_uptrWindow.get() ) { return false; }
 	AdjustWindowRect(&m_uptrWindow.get()->GetRect(), WS_OVERLAPPEDWINDOW, FALSE);
 	HCreateWindow(_hInstance, _nCmdShow);
 	InitDevice();
-	m_uptrSceneManager.reset(new SceneManager(_startScene));
+	m_uptrSceneManager.reset( new SceneManager (_startScene) );
+	if ( nullptr == m_uptrSceneManager.get() ) { return false; }
+	return true;
 }
 
 void KitEngine::ChangeScene(std::shared_ptr<Scene> _changeScene) {

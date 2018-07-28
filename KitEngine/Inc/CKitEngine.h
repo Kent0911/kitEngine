@@ -8,6 +8,8 @@
 #include "../Src/CSceneManager.h"
 #include "CAssetsManager.h"
 
+#pragma comment (lib,"d3d11.lib")
+
 #define DEFALUT_NUMERATOR (UINT)60
 #define DEFALUT_DENOMINATOR (UINT)1
 
