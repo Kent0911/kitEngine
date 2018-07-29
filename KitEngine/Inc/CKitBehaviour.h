@@ -24,7 +24,7 @@ namespace kit {
 			inline axis Yaw() const {
 				return m_yaw;
 			}
-			inline void CulYaw() {
+			inline void CulRad() {
 				m_rad = m_yaw * M_PI / 180;
 			}
 			inline axis Rad() const {
